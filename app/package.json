@@ -1,0 +1,17 @@
+{
+  "name": "priyanshudasgupta-site",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Source for priyanshudasgupta.github.io (React, pre-rendered at build time).",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
