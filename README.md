@@ -8,7 +8,7 @@ Built with **React 19**, bundled with **esbuild**, and **pre-rendered to static 
 
 ```
 app/                    source
-  src/data.js           all site content (edit this to update the site)
+  src/data.js           all site content
   src/components/       React components (Nav, Hero, SchlierenField, Research, ...)
   src/hooks.js          theme + active-section hooks
   src/styles.css        styles
@@ -17,13 +17,3 @@ app/                    source
 index.html, assets/     build output served by GitHub Pages
 files/                  PDFs (résumé, patent manuscript)
 ```
-
-## Updating
-
-```sh
-cd app
-npm install
-npm run build      # rewrites ../index.html and ../assets/
-```
-
-Commit the source changes and the rebuilt output together.
