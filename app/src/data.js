@@ -28,7 +28,7 @@ export const research = [
   {
     when: '2026 – now', now: true,
     title: 'Research Engineer, Biomedical Signal Processing',
-    where: 'Y Combinator-backed health-tech startup',
+    where: 'Health-tech startup',
     text: 'Leading the pulse wave velocity pipeline for a piezoelectric wrist-sensor array built in house and referenced to chest ECG. I designed its physiology-based signal-quality framework, and build U-Net and LSTM models that track blood pressure, SpO₂, and cardiac health.',
   },
   {
