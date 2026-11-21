@@ -115,11 +115,13 @@ export default function SchlierenField({ dark, onInteract }) {
         if (c >= cMin && c <= cMax) continue;
         ctx.drawImage(bg, c * SLOT * k, 0, SLOT * k, canvas.height, c * CW - PAD, 0, SLOT, H);
       }
-      // Every dot looks the same, as in real BOS: the flow shows up only
-      // as the dots' displacement.
-      ctx.fillStyle = `rgba(${colors.current.dot},${look()})`; ctx.beginPath();
+      // Dots keep the same size; displaced ones take on a faint violet tint,
+      // stronger where they shift more, so the plume is just distinguishable.
+      const al = look(), { dot, hot } = colors.current;
+      const mix = (f) => { const A = dot.split(',').map(Number), B = hot.split(',').map(Number); return A.map((v, i) => Math.round(v + (B[i] - v) * f)).join(','); };
+      const tiers = [[], [], []];
       for (let c = Math.max(0, cMin); c <= Math.min(cols.length - 1, cMax); c++) for (const dt of cols[c]) {
-        let px = dt[0], py = dt[1];
+        let px = dt[0], py = dt[1], tier = 0;
         if (py <= yMax) {
           let gx = 0, gy = 0;
           for (let j = 0; j < np; j++) {
@@ -129,11 +131,20 @@ export default function SchlierenField({ dark, onInteract }) {
             const g = P[j][3] * Math.exp(-r2 / (2 * s2)) / s2;
             gx -= g * dx; gy -= g * dy;
           }
-          px -= gx * gain; py -= gy * gain;
+          const ox = gx * gain, oy = gy * gain, mag = Math.abs(ox) + Math.abs(oy);
+          tier = mag < 1.5 ? 0 : mag < 4 ? 1 : 2;
+          px -= ox; py -= oy;
         }
-        ctx.moveTo(px + dt[2], py); ctx.arc(px, py, dt[2], 0, 6.2832);
+        tiers[tier].push(px, py, dt[2]);
       }
-      ctx.fill();
+      const fills = [`rgba(${dot},${al})`, `rgba(${mix(0.3)},${al})`, `rgba(${mix(0.5)},${al})`];
+      for (let ti = 0; ti < 3; ti++) {
+        const arr = tiers[ti];
+        if (!arr.length) continue;
+        ctx.fillStyle = fills[ti]; ctx.beginPath();
+        for (let q = 0; q < arr.length; q += 3) { ctx.moveTo(arr[q] + arr[q + 2], arr[q + 1]); ctx.arc(arr[q], arr[q + 1], arr[q + 2], 0, 6.2832); }
+        ctx.fill();
+      }
     }
     redraw.current = () => { paintBackground(); if (reduce) draw(performance.now()); };
 
