@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { me, publications } from '../data.js';
 import Section, { Num } from './Section.jsx';
+import Demo from './demos.jsx';
 import ExternalLink from './ExternalLink.jsx';
 
 function Authors({ list }) {
@@ -30,6 +31,7 @@ export default function Publications() {
               </div>
               <Authors list={p.authors} />
               <p className="where">{p.venue}</p>
+              {p.demo && <Demo name={p.demo} />}
               {p.note && <p className="note mono">{p.note}</p>}
               {p.links && (
                 <p className="links-inline">

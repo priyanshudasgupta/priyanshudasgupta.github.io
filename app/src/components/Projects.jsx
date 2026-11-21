@@ -1,5 +1,6 @@
 import { featuredProject as f, projects } from '../data.js';
 import Section, { Num } from './Section.jsx';
+import Demo from './demos.jsx';
 import ExternalLink from './ExternalLink.jsx';
 
 export default function Projects() {
@@ -30,6 +31,7 @@ export default function Projects() {
                 <span className="when mono">{p.tech}</span>
               </div>
               <p className="body">{p.text}</p>
+              {p.demo && <Demo name={p.demo} />}
               <p className="links-inline"><ExternalLink href={p.repo}>{p.repoLabel}</ExternalLink></p>
             </div>
           </li>

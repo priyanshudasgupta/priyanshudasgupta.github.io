@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import SchlierenField from './SchlierenField.jsx';
 
-// Full-screen opener: the live Schlieren field, with a cue to scroll.
+// Full-screen opener: the live Schlieren field.
 export default function Hero({ dark }) {
   const [touched, setTouched] = useState(false);
   const onInteract = useCallback(() => setTouched(true), []);

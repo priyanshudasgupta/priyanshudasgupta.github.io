@@ -1,5 +1,6 @@
 import { research } from '../data.js';
 import Section, { Num } from './Section.jsx';
+import Demo from './demos.jsx';
 
 export default function Research() {
   return (
@@ -15,6 +16,7 @@ export default function Research() {
               </div>
               <p className="where">{r.where}</p>
               <p className="body">{r.text}</p>
+              {r.demo && <Demo name={r.demo} />}
             </div>
           </li>
         ))}
