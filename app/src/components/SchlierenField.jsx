@@ -132,12 +132,12 @@ export default function SchlierenField({ dark, onInteract }) {
             gx -= g * dx; gy -= g * dy;
           }
           const ox = gx * gain, oy = gy * gain, mag = Math.abs(ox) + Math.abs(oy);
-          tier = mag < 1.5 ? 0 : mag < 4 ? 1 : 2;
+          tier = mag < 1 ? 0 : mag < 3 ? 1 : 2;
           px -= ox; py -= oy;
         }
         tiers[tier].push(px, py, dt[2]);
       }
-      const fills = [`rgba(${dot},${al})`, `rgba(${mix(0.3)},${al})`, `rgba(${mix(0.5)},${al})`];
+      const fills = [`rgba(${dot},${al})`, `rgba(${mix(0.6)},${al})`, `rgba(${mix(0.85)},${Math.min(1, al + 0.1)})`];
       for (let ti = 0; ti < 3; ti++) {
         const arr = tiers[ti];
         if (!arr.length) continue;
