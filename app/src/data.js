@@ -4,7 +4,7 @@
 export const site = {
   name: 'Priyanshu Dasgupta',
   lede: 'I build imaging systems, simulations, and machine learning models for experimental physics.',
-  now: "Current work: measuring pulse wave velocity from a wrist-worn sensor array, and building theory for Team USA at the International Physicists' Tournament.",
+  now: "Current work: wearable cardiovascular sensing, and building theory for Team USA at the International Physicists' Tournament.",
   study: 'Physics, with minors in Materials Science and Optimization & Quantitative Decision Science',
   school: 'Princeton University',
   schoolUrl: 'https://www.princeton.edu',
@@ -29,7 +29,7 @@ export const research = [
     when: '2026 – now', now: true,
     title: 'Research Engineer, Biomedical Signal Processing',
     where: 'Health-tech startup',
-    text: 'Leading the pulse wave velocity pipeline for a piezoelectric wrist-sensor array built in house and referenced to chest ECG. I designed its physiology-based signal-quality framework, and build U-Net and LSTM models that track blood pressure, SpO₂, and cardiac health.',
+    text: 'Signal processing and machine learning for wearable cardiovascular sensing.',
   },
   {
     when: 'Sep 2026 – now', now: true,
