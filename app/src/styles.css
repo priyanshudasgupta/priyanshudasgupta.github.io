@@ -8,7 +8,7 @@
   --argon: #5B3CC4;
   --argon-soft: #ECE6FB;
   --dot: 20, 26, 38;
-  --dot-hot: 76, 40, 214;
+  --dot-hot: 91, 60, 196;
   color-scheme: light;
 }
 :root[data-theme="dark"] {

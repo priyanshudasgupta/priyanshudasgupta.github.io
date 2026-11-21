@@ -27,11 +27,8 @@ export default function SchlierenField({ dark, onInteract }) {
     const ctx = canvas.getContext('2d');
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, dots = [], cols = [];
-    // Light backgrounds wash out the displaced dots, so in light mode the
-    // undisturbed dots are fainter and the plume's dots darker and larger.
-    const look = () => (parseInt(colors.current.dot, 10) > 128
-      ? { base: 0.42, hot: [0.55, 0.8], grow: 1 }
-      : { base: 0.3, hot: [0.8, 0.95], grow: 1.4 });
+    // Dot opacity: a touch stronger on the light background.
+    const look = () => (parseInt(colors.current.dot, 10) > 128 ? 0.45 : 0.55);
     // The undisturbed dots are pre-drawn once, one vertical strip per column,
     // each strip padded so no dot is cut. Every frame, strips far from the
     // plume are copied as images and only the plume's columns are redrawn
@@ -67,7 +64,7 @@ export default function SchlierenField({ dark, onInteract }) {
       const k = canvas.width / W;
       bg.width = Math.ceil(cols.length * SLOT * k); bg.height = canvas.height;
       bctx.setTransform(k, 0, 0, k, 0, 0);
-      bctx.fillStyle = `rgba(${colors.current.dot},${look().base})`; bctx.beginPath();
+      bctx.fillStyle = `rgba(${colors.current.dot},${look()})`; bctx.beginPath();
       for (let c = 0; c < cols.length; c++) {
         const off = c * SLOT + PAD - c * CW;
         for (const [x, y, r] of cols[c]) { bctx.moveTo(x + off + r, y); bctx.arc(x + off, y, r, 0, 6.2832); }
@@ -111,42 +108,32 @@ export default function SchlierenField({ dark, onInteract }) {
       src.x += (src.tx - src.x) * 0.08; src.y += (src.ty - src.y) * 0.08;
 
       ctx.clearRect(0, 0, W, H);
-      const P = puffs(reduce ? 0 : t), np = P.length, gain = 330;
+      const P = puffs(reduce ? 0 : t), np = P.length, gain = 700;
       const cMin = Math.floor((src.x - 240) / CW), cMax = Math.floor((src.x + 240) / CW);
       const k = canvas.width / W, yMax = src.y + 90;
       for (let c = 0; c < cols.length; c++) {
         if (c >= cMin && c <= cMax) continue;
         ctx.drawImage(bg, c * SLOT * k, 0, SLOT * k, canvas.height, c * CW - PAD, 0, SLOT, H);
       }
-      const buckets = [[], [], [], []];
+      // Every dot looks the same, as in real BOS: the flow shows up only
+      // as the dots' displacement.
+      ctx.fillStyle = `rgba(${colors.current.dot},${look()})`; ctx.beginPath();
       for (let c = Math.max(0, cMin); c <= Math.min(cols.length - 1, cMax); c++) for (const dt of cols[c]) {
-        const px = dt[0], py = dt[1];
-        if (py > yMax) { buckets[0].push(px, py, dt[2]); continue; } // below the source: no plume
-        let gx = 0, gy = 0;
-        for (let j = 0; j < np; j++) {
-          const dx = px - P[j][0], dy = py - P[j][1], s2 = P[j][2] * P[j][2];
-          const r2 = dx * dx + dy * dy;
-          if (r2 > 9 * s2) continue;
-          const g = P[j][3] * Math.exp(-r2 / (2 * s2)) / s2;
-          gx -= g * dx; gy -= g * dy;
+        let px = dt[0], py = dt[1];
+        if (py <= yMax) {
+          let gx = 0, gy = 0;
+          for (let j = 0; j < np; j++) {
+            const dx = px - P[j][0], dy = py - P[j][1], s2 = P[j][2] * P[j][2];
+            const r2 = dx * dx + dy * dy;
+            if (r2 > 9 * s2) continue;
+            const g = P[j][3] * Math.exp(-r2 / (2 * s2)) / s2;
+            gx -= g * dx; gy -= g * dy;
+          }
+          px -= gx * gain; py -= gy * gain;
         }
-        const ox = gx * gain, oy = gy * gain, mag = Math.sqrt(ox * ox + oy * oy);
-        const b = mag < 0.6 ? 0 : mag < 2.5 ? 1 : mag < 5 ? 2 : 3;
-        buckets[b].push(px - ox, py - oy, dt[2]);
+        ctx.moveTo(px + dt[2], py); ctx.arc(px, py, dt[2], 0, 6.2832);
       }
-      const { dot, hot } = colors.current;
-      const L = look();
-      const styles = [`rgba(${dot},${L.base})`, `rgba(${hot},${L.hot[0]})`, `rgba(${hot},${L.hot[1]})`, `rgba(${hot},1)`];
-      for (let bi = 0; bi < 4; bi++) {
-        const arr = buckets[bi];
-        if (!arr.length) continue;
-        ctx.fillStyle = styles[bi]; ctx.beginPath();
-        for (let a = 0; a < arr.length; a += 3) {
-          ctx.moveTo(arr[a] + (bi ? arr[a + 2] * L.grow : arr[a + 2]), arr[a + 1]);
-          ctx.arc(arr[a], arr[a + 1], bi ? arr[a + 2] * L.grow : arr[a + 2], 0, 6.2832);
-        }
-        ctx.fill();
-      }
+      ctx.fill();
     }
     redraw.current = () => { paintBackground(); if (reduce) draw(performance.now()); };
 
