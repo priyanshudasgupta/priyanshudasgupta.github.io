@@ -1,20 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-// Light/dark theme. Starts as `null` so the pre-rendered HTML matches the
+// Light/dark theme (light by default). Starts as `null` so the pre-rendered HTML matches the
 // first client render; the real value is read right after mounting.
 export function useTheme() {
   const [dark, setDark] = useState(null);
 
+  // Light unless the visitor has chosen dark with the toggle.
   useEffect(() => {
-    const root = document.documentElement;
-    const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
-    const read = () => {
-      const t = root.getAttribute('data-theme');
-      setDark(t ? t === 'dark' : !!mq?.matches);
-    };
-    read();
-    mq?.addEventListener('change', read);
-    return () => mq?.removeEventListener('change', read);
+    setDark(document.documentElement.getAttribute('data-theme') === 'dark');
   }, []);
 
   const toggle = useCallback(() => {

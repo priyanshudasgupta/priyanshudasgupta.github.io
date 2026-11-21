@@ -8,22 +8,8 @@
   --argon: #5B3CC4;
   --argon-soft: #ECE6FB;
   --dot: 20, 26, 38;
-  --dot-hot: 91, 60, 196;
+  --dot-hot: 76, 40, 214;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0F1420;
-    --surface: #161C2A;
-    --ink: #E8ECF3;
-    --muted: #A3ADBD;
-    --rule: #2A3242;
-    --argon: #B4A0FF;
-    --argon-soft: #241D42;
-    --dot: 232, 236, 243;
-    --dot-hot: 180, 160, 255;
-    color-scheme: dark;
-  }
 }
 :root[data-theme="dark"] {
   --paper: #0F1420;

@@ -27,6 +27,11 @@ export default function SchlierenField({ dark, onInteract }) {
     const ctx = canvas.getContext('2d');
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, dots = [], cols = [];
+    // Light backgrounds wash out the displaced dots, so in light mode the
+    // undisturbed dots are fainter and the plume's dots darker and larger.
+    const look = () => (parseInt(colors.current.dot, 10) > 128
+      ? { base: 0.42, hot: [0.55, 0.8], grow: 1 }
+      : { base: 0.3, hot: [0.8, 0.95], grow: 1.4 });
     // The undisturbed dots are pre-drawn once, one vertical strip per column,
     // each strip padded so no dot is cut. Every frame, strips far from the
     // plume are copied as images and only the plume's columns are redrawn
@@ -62,7 +67,7 @@ export default function SchlierenField({ dark, onInteract }) {
       const k = canvas.width / W;
       bg.width = Math.ceil(cols.length * SLOT * k); bg.height = canvas.height;
       bctx.setTransform(k, 0, 0, k, 0, 0);
-      bctx.fillStyle = `rgba(${colors.current.dot},0.42)`; bctx.beginPath();
+      bctx.fillStyle = `rgba(${colors.current.dot},${look().base})`; bctx.beginPath();
       for (let c = 0; c < cols.length; c++) {
         const off = c * SLOT + PAD - c * CW;
         for (const [x, y, r] of cols[c]) { bctx.moveTo(x + off + r, y); bctx.arc(x + off, y, r, 0, 6.2832); }
@@ -130,14 +135,15 @@ export default function SchlierenField({ dark, onInteract }) {
         buckets[b].push(px - ox, py - oy, dt[2]);
       }
       const { dot, hot } = colors.current;
-      const styles = [`rgba(${dot},0.42)`, `rgba(${hot},0.55)`, `rgba(${hot},0.8)`, `rgba(${hot},1)`];
+      const L = look();
+      const styles = [`rgba(${dot},${L.base})`, `rgba(${hot},${L.hot[0]})`, `rgba(${hot},${L.hot[1]})`, `rgba(${hot},1)`];
       for (let bi = 0; bi < 4; bi++) {
         const arr = buckets[bi];
         if (!arr.length) continue;
         ctx.fillStyle = styles[bi]; ctx.beginPath();
         for (let a = 0; a < arr.length; a += 3) {
-          ctx.moveTo(arr[a] + arr[a + 2], arr[a + 1]);
-          ctx.arc(arr[a], arr[a + 1], arr[a + 2], 0, 6.2832);
+          ctx.moveTo(arr[a] + (bi ? arr[a + 2] * L.grow : arr[a + 2]), arr[a + 1]);
+          ctx.arc(arr[a], arr[a + 1], bi ? arr[a + 2] * L.grow : arr[a + 2], 0, 6.2832);
         }
         ctx.fill();
       }
