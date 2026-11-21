@@ -12,10 +12,6 @@ export default function Hero({ dark }) {
         <span className="tag">Live</span>
         Background-oriented Schlieren. {touched ? 'Each dot shifts where warm air bends light.' : 'Move your cursor across the field.'}
       </p>
-      <a className="scroll-cue mono" href="#content">
-        Scroll
-        <svg viewBox="0 0 16 10" width="16" height="10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 2l6 6 6-6" /></svg>
-      </a>
     </header>
   );
 }
