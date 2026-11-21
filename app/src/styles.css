@@ -9,6 +9,7 @@
   --argon-soft: #ECE6FB;
   --dot: 20, 26, 38;
   --dot-hot: 91, 60, 196;
+  --bos-bg: #DCE0E6;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
@@ -21,6 +22,7 @@
   --argon-soft: #241D42;
   --dot: 232, 236, 243;
   --dot-hot: 180, 160, 255;
+  --bos-bg: #0F1420;
   color-scheme: dark;
 }
 
@@ -44,7 +46,7 @@ h1, h2, h3, p, ul, ol { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 
 /* ---------- Hero: full-screen Schlieren field ---------- */
-.hero { position: relative; height: 100vh; height: 100svh; min-height: 480px; border-bottom: 1px solid var(--rule); overflow: hidden; }
+.hero { background: var(--bos-bg); position: relative; height: 100vh; height: 100svh; min-height: 480px; border-bottom: 1px solid var(--rule); overflow: hidden; }
 .bos { position: absolute; inset: 0; cursor: crosshair; touch-action: pan-y; }
 .bos canvas { display: block; width: 100%; height: 100%; }
 .hero-note {

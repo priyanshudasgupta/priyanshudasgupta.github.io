@@ -27,8 +27,8 @@ export default function SchlierenField({ dark, onInteract }) {
     const ctx = canvas.getContext('2d');
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, dots = [], cols = [];
-    // Dot opacity: a touch stronger on the light background.
-    const look = () => (parseInt(colors.current.dot, 10) > 128 ? 0.45 : 0.55);
+    // Dot opacity: stronger on the light (grey) background.
+    const look = () => (parseInt(colors.current.dot, 10) > 128 ? 0.45 : 0.72);
     // The undisturbed dots are pre-drawn once, one vertical strip per column,
     // each strip padded so no dot is cut. Every frame, strips far from the
     // plume are copied as images and only the plume's columns are redrawn
