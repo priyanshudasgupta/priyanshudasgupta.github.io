@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
   colours, pointer tracking, and only animates while on screen.
   `init(S)` runs on every resize; `draw(ctx, S)` runs every frame.
 */
-export default function MiniCanvas({ init, draw, height = 150, label, caption }) {
+export default function MiniCanvas({ init, draw, height = 150, label, caption, passive = false }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -65,10 +65,12 @@ export default function MiniCanvas({ init, draw, height = 150, label, caption })
       : null;
     io ? io.observe(canvas) : (visible = true);
 
-    canvas.addEventListener('pointermove', move);
-    canvas.addEventListener('pointerdown', move);
-    canvas.addEventListener('pointerleave', leave);
-    canvas.addEventListener('click', click);
+    if (!passive) {
+      canvas.addEventListener('pointermove', move);
+      canvas.addEventListener('pointerdown', move);
+      canvas.addEventListener('pointerleave', leave);
+      canvas.addEventListener('click', click);
+    }
     document.addEventListener('visibilitychange', onVis);
     resize(); start();
 
@@ -80,11 +82,11 @@ export default function MiniCanvas({ init, draw, height = 150, label, caption })
       canvas.removeEventListener('click', click);
       document.removeEventListener('visibilitychange', onVis);
     };
-  }, [init, draw]);
+  }, [init, draw, passive]);
 
   return (
     <figure className="mini">
-      <canvas ref={ref} style={{ height }} role="img" aria-label={label} />
+      <canvas ref={ref} className={passive ? 'passive' : undefined} style={{ height }} role="img" aria-label={label} />
       <figcaption className="mono">{caption}</figcaption>
     </figure>
   );

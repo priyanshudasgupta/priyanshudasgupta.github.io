@@ -27,6 +27,8 @@ export default function SchlierenField({ dark, onInteract }) {
     const ctx = canvas.getContext('2d');
     const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, dots = [];
+    const bg = document.createElement('canvas'); // undisturbed dots, painted once
+    const bctx = bg.getContext('2d');
 
     let seed = 7;
     const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
@@ -38,13 +40,24 @@ export default function SchlierenField({ dark, onInteract }) {
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       seed = 7; dots = [];
-      const spacing = W < 640 ? 9 : 10;
+      const spacing = W < 640 ? 6.5 : 7;
       for (let y = spacing / 2; y < H; y += spacing) {
         for (let x = spacing / 2; x < W; x += spacing) {
-          dots.push([x + (rand() - 0.5) * spacing * 0.9, y + (rand() - 0.5) * spacing * 0.9, 0.9 + rand() * 0.8]);
+          dots.push([x + (rand() - 0.5) * spacing * 0.9, y + (rand() - 0.5) * spacing * 0.9, 0.65 + rand() * 0.6]);
         }
       }
+      paintBackground();
       if (reduce) draw(performance.now());
+    }
+
+    function paintBackground() {
+      if (!W) return;
+      bg.width = canvas.width; bg.height = canvas.height;
+      const k = canvas.width / W;
+      bctx.setTransform(k, 0, 0, k, 0, 0);
+      bctx.fillStyle = `rgba(${colors.current.dot},0.42)`; bctx.beginPath();
+      for (let d = 0; d < dots.length; d++) { bctx.moveTo(dots[d][0] + dots[d][2], dots[d][1]); bctx.arc(dots[d][0], dots[d][1], dots[d][2], 0, 6.2832); }
+      bctx.fill();
     }
 
     // Plume source eases toward the pointer; drifts on its own when idle.
@@ -59,12 +72,16 @@ export default function SchlierenField({ dark, onInteract }) {
     const leave = () => { src.active = false; };
 
     function puffs(t) {
-      const list = [], n = 8, gap = Math.max(28, H * 0.11), rise = (t * 0.045) % gap;
+      // Puffs rise from the source past the top edge. Each keeps its own
+      // sway as it climbs, so the column meanders like real warm air.
+      const list = [], gap = 44, travelled = (t * 0.05) / gap, rise = travelled % 1, born = Math.floor(travelled);
+      const n = Math.min(48, Math.ceil((src.y + 90) / gap) + 1);
       for (let i = 0; i < n; i++) {
-        const k = i + rise / gap;
-        const sigma = 16 + k * 7.5;
-        const amp = 1 / (1 + k * 0.35);
-        const wob = Math.sin(t * 0.0021 + i * 1.3) * (4 + k * 3.2);
+        const k = i + rise, id = born - i;
+        const sigma = 14 + 44 * (1 - Math.exp(-k / 7));
+        const amp = Math.min(1, k) / (1 + k * 0.07);
+        const sway = Math.min(46, 2 + k * 2.4);
+        const wob = Math.sin(t * 0.0016 + id * 0.85) * sway + Math.sin(t * 0.0031 + id * 2.1) * sway * 0.35;
         list.push([src.x + wob, src.y - k * gap, sigma, amp]);
       }
       return list;
@@ -79,10 +96,15 @@ export default function SchlierenField({ dark, onInteract }) {
       src.x += (src.tx - src.x) * 0.08; src.y += (src.ty - src.y) * 0.08;
 
       ctx.clearRect(0, 0, W, H);
-      const P = puffs(reduce ? 0 : t), np = P.length, gain = 360;
+      ctx.drawImage(bg, 0, 0, W, H);
+      const P = puffs(reduce ? 0 : t), np = P.length, gain = 330;
+      // Only the band around the plume is recomputed each frame.
+      const xMin = Math.floor(src.x - 240), xMax = Math.ceil(src.x + 240), yMax = Math.ceil(src.y + 60);
+      ctx.clearRect(xMin, 0, xMax - xMin, yMax);
       const buckets = [[], [], [], []];
       for (let d = 0; d < dots.length; d++) {
         const px = dots[d][0], py = dots[d][1];
+        if (px < xMin - 2 || px > xMax + 2 || py > yMax + 2) continue;
         let gx = 0, gy = 0;
         for (let j = 0; j < np; j++) {
           const dx = px - P[j][0], dy = py - P[j][1], s2 = P[j][2] * P[j][2];
@@ -96,7 +118,7 @@ export default function SchlierenField({ dark, onInteract }) {
         buckets[b].push(px - ox, py - oy, dots[d][2]);
       }
       const { dot, hot } = colors.current;
-      const styles = [`rgba(${dot},0.38)`, `rgba(${hot},0.55)`, `rgba(${hot},0.8)`, `rgba(${hot},1)`];
+      const styles = [`rgba(${dot},0.42)`, `rgba(${hot},0.55)`, `rgba(${hot},0.8)`, `rgba(${hot},1)`];
       for (let bi = 0; bi < 4; bi++) {
         const arr = buckets[bi];
         if (!arr.length) continue;
@@ -108,7 +130,7 @@ export default function SchlierenField({ dark, onInteract }) {
         ctx.fill();
       }
     }
-    redraw.current = () => { if (reduce) draw(performance.now()); };
+    redraw.current = () => { paintBackground(); if (reduce) draw(performance.now()); };
 
     let running = false, visible = true, raf = 0;
     const loop = (t) => { if (!running) return; draw(t); raf = requestAnimationFrame(loop); };

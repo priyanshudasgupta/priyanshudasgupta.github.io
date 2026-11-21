@@ -1,89 +1,11 @@
 import MiniCanvas from './MiniCanvas.jsx';
 
 // Small helpers
-const frac = (x) => x - Math.floor(x);
 const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const lerp = (a, b, k) => a + (b - a) * k;
 const gauss = (x, c, w) => Math.exp(-((x - c) ** 2) / (2 * w * w));
 const rng = (seed) => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
 const rgba = (c, a) => `rgba(${c},${a})`;
-
-/* ---------- 1. Pulse wave: ECG at the chest, pulse at the wrist ---------- */
-const ecg = (ph) => gauss(ph, 0.12, 0.025) * 0.12 - gauss(ph, 0.185, 0.008) * 0.15 + gauss(ph, 0.2, 0.008) - gauss(ph, 0.215, 0.008) * 0.2 + gauss(ph, 0.42, 0.04) * 0.25;
-const wristWave = (ph) => (ph < 0.1 ? Math.sin((ph / 0.1) * Math.PI / 2) : Math.exp(-(ph - 0.1) * 3.4)) + 0.16 * gauss(ph, 0.4, 0.035);
-
-function drawPulse(ctx, S) {
-  const { w, h, t, colors: c, store: st } = S;
-  const target = S.inside ? clamp(S.px / w, 0, 1) : 0.4 + 0.3 * Math.sin(t * 0.45);
-  st.stiff = lerp(st.stiff ?? target, target, 0.08);
-  const pwv = 5 + 7 * st.stiff;           // m/s
-  const delay = 1.0 / pwv;                 // s, over a 1 m path
-  const T = w < 420 ? 2.2 : 3.2;           // seconds shown
-  const y1 = h * 0.36, y2 = h * 0.86, R = 0.2;
-  const xOf = (time) => ((time - (t - T)) / T) * w;
-
-  ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
-  ctx.strokeStyle = rgba(c.ink, 0.8); ctx.beginPath();
-  for (let x = 0; x <= w; x += 1.5) { const y = y1 - ecg(frac(t - T + (x / w) * T)) * h * 0.24; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-  ctx.stroke();
-  ctx.strokeStyle = rgba(c.hot, 0.95); ctx.beginPath();
-  for (let x = 0; x <= w; x += 1.5) { const y = y2 - wristWave(frac(t - T + (x / w) * T - R - delay)) * h * 0.26; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-  ctx.stroke();
-
-  // Transit-time markers for each beat in view
-  ctx.lineWidth = 1;
-  for (let k = Math.floor(t - T) - 1; k <= Math.ceil(t); k++) {
-    const xa = xOf(k + R), xb = xOf(k + R + delay);
-    if (xb < 0 || xa > w) continue;
-    ctx.setLineDash([3, 3]); ctx.strokeStyle = rgba(c.ink, 0.3);
-    ctx.beginPath(); ctx.moveTo(xa, y1 - h * 0.24); ctx.lineTo(xa, y2); ctx.moveTo(xb, y1); ctx.lineTo(xb, y2); ctx.stroke();
-    ctx.setLineDash([]); ctx.strokeStyle = rgba(c.hot, 0.9);
-    const ym = (y1 + y2) / 2 + 4;
-    ctx.beginPath(); ctx.moveTo(xa, ym); ctx.lineTo(xb, ym); ctx.moveTo(xa, ym - 3); ctx.lineTo(xa, ym + 3); ctx.moveTo(xb, ym - 3); ctx.lineTo(xb, ym + 3); ctx.stroke();
-  }
-  ctx.fillStyle = c.muted; ctx.textAlign = 'left';
-  ctx.fillText('ECG · chest', 10, 16); ctx.fillText('pulse · wrist', 10, y2 - h * 0.26 - 4);
-  ctx.textAlign = 'right';
-  ctx.fillText(`transit ${Math.round(delay * 1000)} ms · ${pwv.toFixed(1)} m/s`, w - 10, 16);
-}
-
-/* ---------- 2. Plasma double layer ---------- */
-function initLayer(S) {
-  const r = rng(11), n = Math.round(clamp(S.w / 7, 40, 90));
-  S.store.parts = Array.from({ length: n }, (_, i) => ({ x: r() * S.w, y: 42 + r() * (S.h - 52), e: i % 3 !== 0, j: 0.7 + r() * 0.6 }));
-}
-function drawLayer(ctx, S) {
-  const { w, h, t, dt, colors: c, store: st } = S;
-  const target = S.inside ? clamp(S.px, 30, w - 30) : w * (0.5 + 0.14 * Math.sin(t * 0.35));
-  st.sx = lerp(st.sx ?? w / 2, target, 0.1);
-  const sx = st.sx;
-  const step = (x) => { const k = clamp((x - sx) / 16 + 0.5, 0, 1); return k * k * (3 - 2 * k); }; // 0 left, 1 right
-
-  // the sheet
-  const g = ctx.createLinearGradient(sx - 14, 0, sx + 14, 0);
-  g.addColorStop(0, rgba(c.hot, 0)); g.addColorStop(0.5, rgba(c.hot, 0.38)); g.addColorStop(1, rgba(c.hot, 0));
-  ctx.fillStyle = g; ctx.fillRect(sx - 14, 20, 28, h - 20);
-
-  // potential profile along the top
-  ctx.strokeStyle = rgba(c.ink, 0.55); ctx.lineWidth = 1.2; ctx.beginPath();
-  for (let x = 0; x <= w; x += 3) { const y = 17 - step(x) * 10; x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-  ctx.stroke();
-  ctx.fillStyle = c.muted; ctx.textAlign = 'left'; ctx.fillText('potential', 8, 32);
-
-  for (const p of st.parts) {
-    const s = step(p.x);
-    const v = p.e ? lerp(30, 190, s) * p.j : -lerp(48, 9, s) * p.j;   // electrons →, ions ←
-    p.x += v * dt;
-    if (p.x > w + 20) p.x = -10; if (p.x < -20) p.x = w + 10;
-    const len = clamp(Math.abs(v) * 0.09, 1, 18);
-    if (p.e) {
-      ctx.strokeStyle = rgba(c.hot, 0.85); ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(p.x - len, p.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-    } else {
-      ctx.fillStyle = rgba(c.ink, 0.6); ctx.beginPath(); ctx.arc(p.x, p.y, 2.4, 0, 6.2832); ctx.fill();
-    }
-  }
-}
 
 /* ---------- 3. Colour centre in diamond ---------- */
 function initDiamond(S) {
@@ -207,20 +129,10 @@ function drawStars(ctx, S) {
 
 /* ---------- Registry ---------- */
 const demos = {
-  pulse: {
-    init: null, draw: drawPulse, height: 150,
-    label: 'Animated heartbeat at the chest and its delayed pulse at the wrist',
-    caption: 'Each heartbeat reaches the wrist a moment later; that delay gives the pulse wave velocity. Move right to stiffen the artery and the wave arrives sooner.',
-  },
-  layer: {
-    init: initLayer, draw: drawLayer, height: 140,
-    label: 'Charged particles accelerating through a thin plasma double layer',
-    caption: 'A double layer is a thin sheet with a sharp voltage step. Electrons (streaks) are flung across it one way and ions (dots) the other. Move to drag the sheet.',
-  },
   diamond: {
-    init: initDiamond, draw: drawDiamond, height: 160,
+    init: initDiamond, draw: drawDiamond, height: 160, passive: true,
     label: 'A crystal lattice with one xenon atom between two vacancies, and its emission spectrum',
-    caption: 'One xenon atom between two missing carbons emits at a single sharp colour, the zero phonon line. Move up to heat the lattice and watch the line fade into a broad band. Click to excite.',
+    caption: 'One xenon atom between two missing carbons emits at a single sharp colour, the zero phonon line. As the lattice warms, the line fades into a broad band.',
   },
   fans: {
     init: initFans, draw: drawFans, height: 170,

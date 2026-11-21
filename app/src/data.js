@@ -28,7 +28,6 @@ export const research = [
   {
     when: '2026 – now', now: true,
     title: 'Research Engineer, Biomedical Signal Processing',
-    demo: 'pulse',
     where: 'Health-tech startup',
     text: 'Leading the pulse wave velocity pipeline for a piezoelectric wrist-sensor array built in house and referenced to chest ECG. I designed its physiology-based signal-quality framework, and build U-Net and LSTM models that track blood pressure, SpO₂, and cardiac health.',
   },
@@ -48,7 +47,6 @@ export const research = [
     when: 'Jun 2024 – Aug 2025',
     title: 'Student Researcher',
     where: 'Mikhailova ETOILES Lab and Fleischer Imaging Lab, Princeton University',
-    demo: 'layer',
     text: 'Imaged an argon current-carrying plasma double layer with Schlieren imaging and two-color interferometry, and wrote Schlieren airflow algorithms in MATLAB and Python for 3D models of aircraft turbulence. First author and presenter of a nonlinear optics poster at the APS 66th Annual Division of Plasma Physics meeting.',
   },
   {
