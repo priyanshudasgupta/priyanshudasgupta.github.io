@@ -1,14 +1,12 @@
-// Shared layout: sticky margin label on the left, content on the right.
-export default function Section({ id, label, title, className, children }) {
+// A section: a small tracked label, then content.
+export default function Section({ id, label, className, children }) {
   return (
     <section id={id} className={className}>
-      <div className="wrap row">
-        <div className="margin-label ui">{label}</div>
-        <div>
-          {title && <h2>{title}</h2>}
-          {children}
-        </div>
-      </div>
+      <h2 className="label mono">{label}</h2>
+      {children}
     </section>
   );
 }
+
+// Two-digit row number, e.g. 01.
+export const Num = ({ i }) => <span className="num mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>;

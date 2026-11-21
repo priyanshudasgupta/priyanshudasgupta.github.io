@@ -1,17 +1,20 @@
 import { research } from '../data.js';
-import Section from './Section.jsx';
+import Section, { Num } from './Section.jsx';
 
 export default function Research() {
   return (
-    <Section id="research" label="Research & experience" title="Labs, teams, and the things I've measured.">
-      <ol className="timeline" reversed>
-        {research.map((r) => (
-          <li key={r.title} className={r.now ? 'now' : undefined}>
-            <span className="when ui">{r.when}</span>
+    <Section id="research" label="Research & experience">
+      <ol className="rows">
+        {research.map((r, i) => (
+          <li key={r.title}>
+            <Num i={i} />
             <div>
-              <h3>{r.title}</h3>
+              <div className="row-head">
+                <h3>{r.title}</h3>
+                <span className={`when mono${r.now ? ' now' : ''}`}>{r.when}</span>
+              </div>
               <p className="where">{r.where}</p>
-              <p>{r.text}</p>
+              <p className="body">{r.text}</p>
             </div>
           </li>
         ))}

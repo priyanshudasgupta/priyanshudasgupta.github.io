@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { site } from '../data.js';
 import Section from './Section.jsx';
-import ExternalLink from './ExternalLink.jsx';
 
 // Résumé request: a plain form POST to FormSubmit, which emails the visitor a
 // download link (autoresponse) and sends the request to my inbox. FormSubmit
@@ -31,7 +30,7 @@ function ResumeForm() {
       <div className="hp" aria-hidden="true">
         <label>Leave this empty <input type="text" name="_honey" tabIndex={-1} autoComplete="off" /></label>
       </div>
-      <p className="fine ui">Sent through FormSubmit after a quick captcha. I'll see your email address so I know who asked.</p>
+      <p className="fine">Sent through FormSubmit after a quick captcha. I'll see your email address so I know who asked.</p>
     </form>
   );
 }
@@ -53,30 +52,15 @@ function CopyEmail() {
   return <button className="copy-btn" type="button" onClick={copy}>{copied ? 'Copied' : 'Copy email'}</button>;
 }
 
-const LinkedInIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" />
-  </svg>
-);
-const GitHubIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-  </svg>
-);
-
 export default function Contact() {
   return (
-    <Section id="contact" className="contact" label="Contact" title="Get in touch.">
+    <Section id="contact" className="contact" label="Contact">
       <p className="prose">I'm looking for research positions and internships for summer 2027. Email is the best way to reach me.</p>
-      <ResumeForm />
       <div className="email-line">
         <a href={`mailto:${site.email}`}>{site.email}</a>
         <CopyEmail />
       </div>
-      <ul className="links">
-        <li><ExternalLink href={site.linkedin}><LinkedInIcon />LinkedIn</ExternalLink></li>
-        <li><ExternalLink href={site.github}><GitHubIcon />GitHub</ExternalLink></li>
-      </ul>
+      <ResumeForm />
     </Section>
   );
 }

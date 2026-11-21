@@ -2,14 +2,14 @@
 
 Personal website of Priyanshu Dasgupta, live at **https://priyanshudasgupta.github.io**.
 
-Built with **React 19**, bundled with **esbuild**, and **pre-rendered to static HTML** at build time, so the page loads instantly, works without JavaScript, and is readable by search engines. React then hydrates it to run the interactive parts: the live background-oriented Schlieren canvas, the light/dark theme toggle, section-aware navigation and the résumé request form.
+Built with **React 19**, bundled with **esbuild**, and **pre-rendered to static HTML** at build time, so the page loads instantly, works without JavaScript, and is readable by search engines. React then hydrates it to run the interactive parts: the live background-oriented Schlieren canvas, the light/dark theme toggle, section-aware sidebar navigation and the résumé request form.
 
 ## Layout
 
 ```
 app/                    source
   src/data.js           all site content
-  src/components/       React components (Nav, Hero, SchlierenField, Research, ...)
+  src/components/       React components (Hero, Sidebar, SchlierenField, Research, ...)
   src/hooks.js          theme + active-section hooks
   src/styles.css        styles
   index.template.html   HTML shell (meta tags, fonts)

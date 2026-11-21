@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { me, publications } from '../data.js';
-import Section from './Section.jsx';
+import Section, { Num } from './Section.jsx';
 import ExternalLink from './ExternalLink.jsx';
 
 function Authors({ list }) {
@@ -18,18 +18,21 @@ function Authors({ list }) {
 
 export default function Publications() {
   return (
-    <Section id="publications" label="Publications" title="Posters, presentations, and a patent.">
-      <ol className="pubs" reversed>
-        {publications.map((p) => (
+    <Section id="publications" label="Publications">
+      <ol className="rows">
+        {publications.map((p, i) => (
           <li key={p.title}>
-            <span className="when ui">{p.when}</span>
+            <Num i={i} />
             <div>
-              <h3>{p.title}</h3>
+              <div className="row-head">
+                <h3>{p.title}</h3>
+                <span className="when mono">{p.when}</span>
+              </div>
               <Authors list={p.authors} />
-              <p className="venue">{p.venue}</p>
-              {p.note && <p className="note ui">{p.note}</p>}
+              <p className="where">{p.venue}</p>
+              {p.note && <p className="note mono">{p.note}</p>}
               {p.links && (
-                <p className="links-inline ui">
+                <p className="links-inline">
                   {p.links.map((l) => <ExternalLink key={l.href} href={l.href}>{l.label}</ExternalLink>)}
                 </p>
               )}

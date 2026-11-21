@@ -1,6 +1,6 @@
 import { useTheme } from './hooks.js';
-import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
+import Sidebar from './components/Sidebar.jsx';
 import Research from './components/Research.jsx';
 import Publications from './components/Publications.jsx';
 import Projects from './components/Projects.jsx';
@@ -12,18 +12,19 @@ export default function App() {
   const [dark, toggleTheme] = useTheme();
   return (
     <>
-      <Nav dark={dark} onToggleTheme={toggleTheme} />
-      <main id="top">
-        <Hero dark={dark} />
-        <Research />
-        <Publications />
-        <Projects />
-        <About />
-        <Contact />
-      </main>
-      <footer>
-        <div className="wrap ui">© 2026 {site.name}</div>
-      </footer>
+      <Hero dark={dark} />
+      <div className="shell" id="content">
+        <Sidebar dark={dark} onToggleTheme={toggleTheme} />
+        <main>
+          <p className="lede">{site.lede}</p>
+          <p className="now">{site.now}</p>
+          <Research />
+          <Publications />
+          <Projects />
+          <About />
+          <Contact />
+        </main>
+      </div>
     </>
   );
 }

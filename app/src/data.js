@@ -3,7 +3,12 @@
 
 export const site = {
   name: 'Priyanshu Dasgupta',
-  lede: 'Physics at Princeton. I build imaging systems, simulations, and machine learning models for experimental physics.',
+  lede: 'I build imaging systems, simulations, and machine learning models for experimental physics.',
+  now: "Current work: measuring pulse wave velocity from a wrist-worn sensor array, and building theory for Team USA at the International Physicists' Tournament.",
+  study: 'Physics, with minors in Materials Science and Optimization & Quantitative Decision Science',
+  school: 'Princeton University',
+  schoolUrl: 'https://www.princeton.edu',
+  place: 'Princeton, NJ',
   email: 'priyanshu@princeton.edu',
   linkedin: 'https://www.linkedin.com/in/priyanshu-dasgupta-a95588289/',
   github: 'https://github.com/priyanshudasgupta',
@@ -12,25 +17,25 @@ export const site = {
 };
 
 export const nav = [
-  { id: 'research', label: 'Research', hideSm: true },
-  { id: 'publications', label: 'Publications', hideSm: true },
+  { id: 'research', label: 'Research' },
+  { id: 'publications', label: 'Publications' },
   { id: 'projects', label: 'Projects' },
-  { id: 'about', label: 'About', hideSm: true },
+  { id: 'about', label: 'About' },
   { id: 'contact', label: 'Contact' },
 ];
 
 export const research = [
   {
     when: '2026 – now', now: true,
-    title: 'Machine Learning Developer',
-    where: 'Health-tech startup',
-    text: 'Building U-Net and LSTM models for a wearable that tracks blood pressure, SpO₂, and other cardiac signals from in-house hardware, benchmarked against EEG and ECG readings.',
+    title: 'Research Engineer, Biomedical Signal Processing',
+    where: 'Y Combinator-backed health-tech startup',
+    text: 'Leading the pulse wave velocity pipeline for a piezoelectric wrist-sensor array built in house and referenced to chest ECG. I designed its physiology-based signal-quality framework, and build U-Net and LSTM models that track blood pressure, SpO₂, and cardiac health.',
   },
   {
     when: 'Sep 2026 – now', now: true,
-    title: 'Experimental Physicist and Data Analyst',
+    title: 'Theorist and Data Analyst',
     where: "Team USA, International Physicists' Tournament (Authentic Research Partners)",
-    text: "One of five members representing the U.S.; I run the modeling simulations behind the team's papers.",
+    text: "One of five members representing the U.S.; I build the theoretical models and lead the data analysis behind the team's papers.",
   },
   {
     when: 'Jul – Aug 2025',
@@ -130,7 +135,6 @@ export const projects = [
 ];
 
 export const about = {
-  title: 'A first-year who likes to see how things work.',
   paragraphs: [
     "I'm studying physics at Princeton, with minors in materials science and in optimization and quantitative decision science. Most of my work comes down to one loop: build a model of something messy, measure it, and find out where the model is wrong.",
     'Outside the lab, I sing with Tarana, play lead guitar in an Indo-rock band, co-founded a catering business that supports families in Kolkata, and spent four years teaching English to refugees.',

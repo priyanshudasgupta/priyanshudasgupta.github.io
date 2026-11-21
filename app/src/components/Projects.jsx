@@ -1,42 +1,40 @@
 import { featuredProject as f, projects } from '../data.js';
-import Section from './Section.jsx';
+import Section, { Num } from './Section.jsx';
 import ExternalLink from './ExternalLink.jsx';
-
-function Feature() {
-  return (
-    <article className="feature">
-      <h3>{f.title}</h3>
-      <p className="sub">{f.sub}</p>
-      <p>{f.text}</p>
-      <ul className="parts">
-        {f.parts.map((p) => <li key={p.name}><strong>{p.name}</strong>{p.text}</li>)}
-      </ul>
-      <ul className="tech ui" aria-label="Technologies">
-        {f.tech.map((t) => <li key={t}>{t}</li>)}
-      </ul>
-      <ExternalLink className="repo-link ui" href={f.repo}>View the repository on GitHub</ExternalLink>
-    </article>
-  );
-}
 
 export default function Projects() {
   return (
-    <Section id="projects" label="Projects" title="Code I've written, from optics benches to web apps.">
-      <Feature />
-      <ul className="projects">
-        {projects.map((p) => (
-          <li key={p.title}>
-            <div>
-              <h3><ExternalLink href={p.href}>{p.title}</ExternalLink></h3>
-              <p>{p.text}</p>
+    <Section id="projects" label="Projects">
+      <ol className="rows">
+        <li className="feature">
+          <Num i={0} />
+          <div>
+            <div className="row-head">
+              <h3><ExternalLink href={f.repo}>{f.title}</ExternalLink></h3>
+              <span className="when mono">{f.tech.join(' · ')}</span>
             </div>
-            <div className="meta ui">
-              {p.tech}
-              <ExternalLink href={p.repo}>{p.repoLabel}</ExternalLink>
+            <p className="where">{f.sub}</p>
+            <p className="body">{f.text}</p>
+            <ul className="parts">
+              {f.parts.map((p) => <li key={p.name}><strong>{p.name}</strong>{p.text}</li>)}
+            </ul>
+            <p className="links-inline"><ExternalLink href={f.repo}>View the repository on GitHub</ExternalLink></p>
+          </div>
+        </li>
+        {projects.map((p, i) => (
+          <li key={p.title}>
+            <Num i={i + 1} />
+            <div>
+              <div className="row-head">
+                <h3><ExternalLink href={p.href}>{p.title}</ExternalLink></h3>
+                <span className="when mono">{p.tech}</span>
+              </div>
+              <p className="body">{p.text}</p>
+              <p className="links-inline"><ExternalLink href={p.repo}>{p.repoLabel}</ExternalLink></p>
             </div>
           </li>
         ))}
-      </ul>
+      </ol>
     </Section>
   );
 }
