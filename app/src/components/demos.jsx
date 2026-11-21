@@ -88,7 +88,7 @@ function drawLayer(ctx, S) {
 /* ---------- 3. Colour centre in diamond ---------- */
 function initDiamond(S) {
   const r = rng(5), a = 20, W = S.w * 0.58, atoms = [];
-  const cols = Math.floor(W / a), rows = Math.floor((S.h - 16) / (a * 0.87));
+  const cols = Math.floor(W / a), rows = Math.floor((S.h - 34) / (a * 0.87));
   const cr = Math.floor(rows / 2), cc = Math.floor(cols / 2);
   for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) {
     const x = 14 + j * a + (i % 2 ? a / 2 : 0), y = 14 + i * a * 0.87;
@@ -133,8 +133,7 @@ function drawDiamond(ctx, S) {
   ctx.fillStyle = c.muted; ctx.textAlign = 'left';
   ctx.fillText('emission', x0, 16);
   ctx.fillText('wavelength →', x0, h - 8);
-  ctx.textAlign = 'right';
-  ctx.fillText(T < 0.33 ? 'cold lattice' : T < 0.66 ? 'warm lattice' : 'hot lattice', w - 12, 16);
+  ctx.fillText(T < 0.33 ? 'cold lattice' : T < 0.66 ? 'warm lattice' : 'hot lattice', 10, h - 8);
 }
 
 /* ---------- 4. STREAMS fan array ---------- */
@@ -169,7 +168,7 @@ function drawFans(ctx, S) {
     for (let b = 0; b < 3; b++) { const a = st.ang[i] + b * 2.094; ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * 7, cy + Math.sin(a) * 7); }
     ctx.stroke();
     ctx.fillStyle = c.muted; ctx.textAlign = 'center';
-    if (cw > 52) ctx.fillText(`${Math.round(s * 100)}%`, cx + 26, cy + 4);
+    if (cw > 70) ctx.fillText(`${Math.round(s * 100)}%`, cx + 26, cy + 4);
   }
 }
 
